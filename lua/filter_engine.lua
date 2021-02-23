@@ -13,7 +13,7 @@ env = assert( driver.mysql() )
 
 function preresolve ( dq )
     -- create connection to database
-    koneksi = assert(env:connect("tes_filter", 'alfian', '24april1997', '127.0.0.1'))
+    koneksi = assert(env:connect("tes_filter", 'pdns_user', '', '127.0.0.1'))
     -- get query name
     domain = dq.qname:toString()
     -- remove last dot from query name
