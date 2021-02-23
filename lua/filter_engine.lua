@@ -35,7 +35,7 @@ function preresolve ( dq )
         then
             -- rewrite the query
             -- print('3')
-            print("Query ",domain," Blocked")
+            pdnslog("Query ",domain," Blocked", pdns.loglevels.Info)
             dq:addAnswer(pdns.A, "192.168.10.22")
             -- message for domain dig
             dq:addAnswer(pdns.TXT, "\"Domain ini diblokir\"", 3601)
