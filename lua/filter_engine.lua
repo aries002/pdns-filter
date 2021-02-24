@@ -8,14 +8,12 @@
 
 pdnslog("pdns-recursor Lua script starting!", pdns.loglevels.Warning)
 driver = require "luasql.mysql"
-local config = require "config"
-config = assert( config )
 env = assert( driver.mysql() )
 
 
 function preresolve ( dq )
     -- create connection to database
-    koneksi = assert(env:connect(config.database.host, config.database.username, config.database.password, config.database.host))
+    koneksi = assert(env:connect(_G.config.database.host, _G.config.database.username, _G.config.database.password, _G.config.database.host))
     -- get query name
     domain = dq.qname:toString()
     -- remove last dot from query name
