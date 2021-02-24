@@ -8,7 +8,7 @@
 
 pdnslog("pdns-recursor Lua script starting!", pdns.loglevels.Warning)
 driver = require "luasql.mysql"
-config = require "config"
+local config = require "config"
 env = assert( driver.mysql() )
 
 
