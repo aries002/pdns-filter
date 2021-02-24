@@ -9,7 +9,7 @@
 pdnslog("pdns-recursor Lua script starting!", pdns.loglevels.Warning)
 driver = require "luasql.mysql"
 env = assert( driver.mysql() )
-
+config = require "config"
 
 function preresolve ( dq )
     -- create connection to database
