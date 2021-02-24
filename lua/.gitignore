@@ -1,2 +1,4 @@
-!filter_engine.lua
-!database_template.sql
+\!filter_engine.lua
+\!database_template.sql
+\!config.lua.template
+*
