@@ -16,30 +16,35 @@ env = assert( driver.mysql() )
 --     password = "24april1997",
 --     database = "tes_filter",
 -- }
-config = dofile("config.lua")
+config = dofile("/etc/powerdns/lua/config.lua")
+blocklist = newDS()
 -- ip addresse for redirection
+koneksi = assert(env:connect(config.database.database, config.database.username, config.database.password, config.database.host))
+cursor =  assert (koneksi:execute(string.format("SELECT name FROM domains")))
+row = cursor:fetch ({}, "a")
+-- list = {}
+-- num = 0
+while row do
+    blocklist:add(row.name)
+    -- num = num+1
+    row = cursor:fetch(row, "a")
+end
+-- print (list)
+-- blocklist:add(list)
+
 
 function preresolve ( dq )
-    local stat = false
-    -- create connection to database
-    koneksi = assert(env:connect(config.database.database, config.database.username, config.database.password, config.database.host))
-    -- get query name
-    domain = dq.qname:toString()
-    -- remove last dot from query name
-    domain = domain:gsub("%.$", "")
-    -- print(nama)
-    -- sql steatment for checking query name retun '1' if exist
-    sql = string.format("SELECT '1' FROM domains WHERE name = '%s'", domain)
-    -- print (sql)
-    -- execute query
-    local sth =  assert (koneksi:execute( string.format(sql) ) )
-    -- print('1')
-    -- print(sth:fetch())
-    -- check if true
-    if (sth:fetch() == '1' and (dq.qtype == pdns.A or dq.qtype == pdns.A))
+    stat = false
+    -- print (blocklist:toString(dq.qname))
+    if blocklist:check(dq.qname)
     then
         -- print('2')
         -- check if it A record
+        if dq.qtype == pdns.AAA
+        then
+            dq:addAnswer(pdns.AAA, "::1", 3600)
+            stat = true
+        end
         if dq.qtype == pdns.A
         then
             -- rewrite the query
@@ -53,6 +58,8 @@ function preresolve ( dq )
             stat = true
         end
     end
-    koneksi:close()
     return stat
 end
+cursor:close()
+koneksi:close()
+pdnslog("pdns-recursor Lua script done priming!!", pdns.loglevels.Warning)
