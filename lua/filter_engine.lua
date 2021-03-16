@@ -10,7 +10,7 @@
 pdnslog("pdns-recursor Lua script starting!", pdns.loglevels.Warning)
 driver = require "luasql.mysql"
 env = assert( driver.mysql() )
-config = dofile("config.lua")
+config = dofile("/etc/powerdns/pdns-filter/lua/config.lua")
 blocklist = newDS()
 -- get domain blacklist from database
 koneksi = assert (env:connect(config.database.database, config.database.username, config.database.password, config.database.host))
